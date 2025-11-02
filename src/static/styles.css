@@ -63,6 +63,7 @@ section h3 {
   border: 1px solid #ddd;
   border-radius: 5px;
   background-color: #f9f9f9;
+  display: block;
 }
 
 .activity-card h4 {
@@ -72,6 +73,62 @@ section h3 {
 
 .activity-card p {
   margin-bottom: 8px;
+}
+
+/* Participants list styling */
+.participants-list {
+  list-style: none;
+  margin: 12px 0 0 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.participant-item {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 8px;
+  border-radius: 8px;
+  background: linear-gradient(180deg, rgba(26,35,126,0.03), rgba(255,255,255,0));
+  border: 1px solid rgba(26,35,126,0.05);
+}
+
+.participant-item.no-participants {
+  background: transparent;
+  color: #666;
+  font-style: italic;
+  padding-left: 0;
+  border: none;
+}
+
+/* Avatar */
+.avatar {
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #1a237e, #3949ab);
+  color: white;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 700;
+  font-size: 0.85rem;
+  box-shadow: 0 2px 6px rgba(57,73,171,0.14);
+  flex: 0 0 36px;
+}
+
+/* Participant email text */
+.participant-email {
+  font-size: 0.95rem;
+  color: #123;
+  word-break: break-all;
+}
+
+/* Slight spacing below the participants list so the form section breathes */
+.activity-card + .activity-card {
+  margin-top: 12px;
 }
 
 .form-group {
