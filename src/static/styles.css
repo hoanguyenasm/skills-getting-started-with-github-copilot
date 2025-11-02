@@ -95,6 +95,22 @@ section h3 {
   border: 1px solid rgba(26,35,126,0.05);
 }
 
+/* Delete button next to participant */
+.delete-btn {
+  margin-left: auto;
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  color: #c62828;
+  font-size: 1rem;
+  padding: 6px;
+  border-radius: 4px;
+}
+
+.delete-btn:hover {
+  background: rgba(198,40,40,0.08);
+}
+
 .participant-item.no-participants {
   background: transparent;
   color: #666;

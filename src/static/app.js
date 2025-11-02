@@ -13,17 +13,77 @@ document.addEventListener("DOMContentLoaded", () => {
   }
 
   // Helper: build a participant list item
-  function createParticipantLi(email) {
+  function createParticipantLi(email, activityName) {
     const li = document.createElement("li");
     li.className = "participant-item";
+
     const avatar = document.createElement("span");
     avatar.className = "avatar";
     avatar.textContent = initialsFromEmail(email);
+
     const span = document.createElement("span");
     span.className = "participant-email";
     span.textContent = email;
+
+    // Delete button
+    const del = document.createElement("button");
+    del.className = "delete-btn";
+    del.setAttribute("aria-label", `Unregister ${email}`);
+    del.title = "Unregister";
+    del.textContent = "🗑";
+
+    // Handle unregister action
+    del.addEventListener("click", async () => {
+      if (!confirm(`Remove ${email} from ${activityName}?`)) return;
+      try {
+        const response = await fetch(
+          `/activities/${encodeURIComponent(activityName)}/unregister?email=${encodeURIComponent(email)}`,
+          { method: "POST" }
+        );
+        const result = await response.json();
+        if (response.ok) {
+          // Remove the list item from UI
+          const parentCard = li.closest('.activity-card');
+          li.remove();
+
+          // If there are no participants left, add placeholder
+          if (parentCard) {
+            const ul = parentCard.querySelector('.participants-list');
+            if (ul && ul.children.length === 0) {
+              const placeholder = document.createElement('li');
+              placeholder.className = 'participant-item no-participants';
+              placeholder.textContent = 'No participants yet — be the first!';
+              ul.appendChild(placeholder);
+            }
+
+            // Increment spots-left value
+            const spotsSpan = parentCard.querySelector('.spots-left');
+            if (spotsSpan) {
+              const current = parseInt(spotsSpan.textContent, 10);
+              if (!Number.isNaN(current)) spotsSpan.textContent = current + 1;
+            }
+          }
+
+          messageDiv.textContent = result.message || 'Participant removed';
+          messageDiv.className = 'message success';
+          messageDiv.classList.remove('hidden');
+          setTimeout(() => messageDiv.classList.add('hidden'), 4000);
+        } else {
+          messageDiv.textContent = result.detail || 'Failed to remove participant';
+          messageDiv.className = 'message error';
+          messageDiv.classList.remove('hidden');
+        }
+      } catch (err) {
+        messageDiv.textContent = 'Failed to remove participant';
+        messageDiv.className = 'message error';
+        messageDiv.classList.remove('hidden');
+        console.error('Error unregistering:', err);
+      }
+    });
+
     li.appendChild(avatar);
     li.appendChild(span);
+    li.appendChild(del);
     return li;
   }
 
@@ -66,7 +126,7 @@ document.addEventListener("DOMContentLoaded", () => {
           participantsUl.appendChild(li);
         } else {
           details.participants.forEach((email) => {
-            participantsUl.appendChild(createParticipantLi(email));
+            participantsUl.appendChild(createParticipantLi(email, name));
           });
         }
 
@@ -115,7 +175,7 @@ document.addEventListener("DOMContentLoaded", () => {
           const np = ul.querySelector(".no-participants");
           if (np) np.remove();
           // Append new participant
-          ul.appendChild(createParticipantLi(email));
+          ul.appendChild(createParticipantLi(email, activity));
           // Decrement spots-left value
           const spotsSpan = card.querySelector(".spots-left");
           if (spotsSpan) {
